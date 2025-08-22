@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AS Earn Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Telegram Mini App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <!-- Your Firebase Config -->
+    <script src="firebaseConfig.js"></script>
+    <!-- Monetag SDK -->
+    <script src='//libtl.com/sdk.js' data-zone='9725833' data-sdk='show_9725833'></script>
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- Loader Screen -->
+        <div id="loader" class="loader-screen">
+            <div class="spinner"></div>
+            <p>Loading AS Earn Hub...</p>
+        </div>
+
+        <!-- Header -->
+        <header class="header">
+            <span class="header-title">AS Earn Hub</span>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Home Screen -->
+            <section id="home-screen" class="screen active">
+                <div class="profile-card glassmorphism-card">
+                    <img id="user-avatar" src="https://via.placeholder.com/60" alt="User Avatar" class="user-avatar">
+                    <h2 id="profile-name" class="profile-name">Guest User</h2>
+                    <div class="balance-display">
+                        <span class="balance-label">AS Points:</span>
+                        <span id="as-points-balance" class="as-points-balance">0</span>
+                    </div>
+                </div>
+
+                <div class="daily-checkin-card glassmorphism-card">
+                    <h3>Daily Check-in Streak</h3>
+                    <div id="streak-indicator" class="streak-indicator">
+                        <!-- Days will be dynamically inserted here -->
+                    </div>
+                    <button id="claim-checkin-btn" class="action-button primary-button">Claim Day 1 (1 AS)</button>
+                </div>
+
+                <div class="earnings-summary-card glassmorphism-card">
+                    <h3>Today's Earnings</h3>
+                    <p>Ads: <span id="today-ads-earnings">0</span> AS</p>
+                    <p>TG Tasks: <span id="today-tg-tasks-earnings">0</span> AS</p>
+                    <p>Referrals: <span id="today-referrals-earnings">0</span> AS</p>
+                    <!-- Optional Daily Goal Progress (placeholder for future implementation) -->
+                    <!-- <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: 50%;"></div>
+                    </div>
+                    <p>Daily Goal: 50/100 AS</p> -->
+                </div>
+            </section>
+
+            <!-- Ads Task Section -->
+            <section id="ads-task-screen" class="screen">
+                <h2 class="section-title">ADS 📺 Tasks</h2>
+                <div class="glassmorphism-card">
+                    <p>Complete ad tasks to earn AS Points.</p>
+                    <p>Reward: <span class="highlight">0.35 AS</span> per ad.</p>
+                    <p class="small-text">Max 15 tasks/hour, 120 tasks/day (server-side limits applied).</p>
+                    <div class="ad-metrics">
+                        <p>Daily: <span id="ads-daily-count">0</span> / 120</p>
+                        <p>Hourly: <span id="ads-hourly-count">0</span> / 15</p>
+                        <p>Lifetime: <span id="ads-lifetime-count">0</span></p>
+                    </div>
+                    <button id="start-ads-task-btn" class="action-button primary-button pulsing-button">Start Task</button>
+                    <div id="ad-task-status" class="status-message"></div>
+                </div>
+            </section>
+
+            <!-- Telegram Tasks Section -->
+            <section id="tg-tasks-screen" class="screen">
+                <h2 class="section-title">Telegram 📢 Tasks</h2>
+                <div class="glassmorphism-card">
+                    <p>Join Telegram channels/groups to earn <span class="highlight">1 AS</span> point per task.</p>
+                    <ul class="task-list" id="tg-task-list">
+                        <li data-task-id="tg_channel_1">
+                            <span>Join Channel ➜ <a href="https://t.me/ASearnhub" target="_blank">ASearnhub</a></span>
+                            <button class="join-tg-btn action-button" data-link="https://t.me/ASearnhub">Verify & Claim</button>
+                            <span class="task-status"></span>
+                        </li>
+                        <li data-task-id="tg_group_1">
+                            <span>Join Group ➜ <a href="https://t.me/ASearnhubchat" target="_blank">ASearnhubchat</a></span>
+                            <button class="join-tg-btn action-button" data-link="https://t.me/ASearnhubchat">Verify & Claim</button>
+                            <span class="task-status"></span>
+                        </li>
+                        <li data-task-id="tg_channel_2">
+                            <span>Join Channel ➜ <a href="https://t.me/Scalpingargha" target="_blank">Scalpingargha</a></span>
+                            <button class="join-tg-btn action-button" data-link="https://t.me/Scalpingargha">Verify & Claim</button>
+                            <span class="task-status"></span>
+                        </li>
+                        <li data-task-id="tg_channel_3">
+                            <span>Join Channel ➜ <a href="https://t.me/earningsceret" target="_blank">earningsceret</a></span>
+                            <button class="join-tg-btn action-button" data-link="https://t.me/earningsceret">Verify & Claim</button>
+                            <span class="task-status"></span>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Referral System Section -->
+            <section id="referral-screen" class="screen">
+                <h2 class="section-title">Referral 👥 System</h2>
+                <div class="glassmorphism-card">
+                    <p>Share your referral code and earn <span class="highlight">20 AS</span> points for each successful referral!</p>
+                    <p>New users get <span class="highlight">5 AS</span> points when referred.</p>
+                    <div class="referral-code-display">
+                        <label for="my-referral-code">Your Referral Code:</label>
+                        <div class="code-input-group">
+                            <input type="text" id="my-referral-code" class="referral-input" readonly>
+                            <button id="copy-referral-code-btn" class="action-button small-button">Copy</button>
+                        </div>
+                    </div>
+                    <p class="small-text">Referred users must complete initial tasks for you to get credit (e.g., join all TG channels AND/OR complete 15 ads).</p>
+
+                    <div class="referral-input-section">
+                        <h4>Enter a Referral Code</h4>
+                        <div class="code-input-group">
+                            <input type="text" id="enter-referral-code" class="referral-input" placeholder="Enter code (e.g., ASUsername)">
+                            <button id="submit-referral-code-btn" class="action-button primary-button small-button">Submit</button>
+                        </div>
+                        <p id="referral-message" class="status-message"></p>
+                    </div>
+
+                    <div class="referral-list-section">
+                        <h4>Your Referrals (<span id="total-referrals-count">0</span>)</h4>
+                        <ul id="referral-list">
+                            <!-- Referrals will be dynamically inserted here -->
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Withdraw Section -->
+            <section id="withdraw-screen" class="screen">
+                <h2 class="section-title">Withdraw 💸 Funds</h2>
+                <div class="glassmorphism-card">
+                    <p>Current AS Points: <span id="withdraw-current-balance" class="highlight">0</span></p>
+
+                    <div class="withdrawal-option">
+                        <h3>Binance ID Redemption</h3>
+                        <p>Requires <span class="highlight">320 AS Points</span> = ~$0.9 USD</p>
+                        <input type="text" id="binance-pay-id" class="input-field" placeholder="Enter Binance Pay ID">
+                        <button id="request-binance-withdraw-btn" class="action-button primary-button withdraw-btn" disabled>Request Withdrawal</button>
+                        <p id="binance-withdraw-status" class="status-message"></p>
+                    </div>
+
+                    <div class="withdrawal-option">
+                        <h3>Google Play Redeem Code</h3>
+                        <p>Requires <span class="highlight">210 AS Points</span> = ~$0.5 USD</p>
+                        <input type="email" id="google-play-email" class="input-field" placeholder="Enter Email for Code">
+                        <button id="request-google-play-withdraw-btn" class="action-button primary-button withdraw-btn" disabled>Request Withdrawal</button>
+                        <p id="google-play-withdraw-status" class="status-message"></p>
+                    </div>
+
+                    <div class="withdrawal-history">
+                        <h4>Withdrawal History</h4>
+                        <ul id="withdrawal-history-list">
+                            <!-- Withdrawal history will be dynamically inserted here -->
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile Section -->
+            <section id="profile-screen" class="screen">
+                <h2 class="section-title">Profile 👤</h2>
+                <div class="profile-details glassmorphism-card">
+                    <img id="profile-avatar-large" src="https://via.placeholder.com/100" alt="User Avatar" class="profile-avatar-large">
+                    <p><strong>Username:</strong> <span id="profile-username">N/A</span></p>
+                    <p><strong>Profile Name:</strong> <span id="profile-full-name">N/A</span></p>
+                    <p><strong>User ID:</strong> <span id="profile-user-id">N/A</span></p>
+                    <p><strong>Join Date:</strong> <span id="profile-join-date">N/A</span></p>
+                    <p><strong>Current Balance:</strong> <span id="profile-current-balance" class="highlight">0 AS</span></p>
+                    <p><strong>Total Earned:</strong> <span id="profile-total-earned" class="highlight">0 AS</span></p>
+                    <p><strong>Tasks Done:</strong> <span id="profile-tasks-done">0</span></p>
+                    <p><strong>Current Streak:</strong> Day <span id="profile-current-streak">0</span></p>
+                    <p><strong>Total Referrals:</strong> <span id="profile-total-referrals">0</span></p>
+                </div>
+
+                <div class="history-cards">
+                    <div class="glassmorphism-card">
+                        <h3>Task History</h3>
+                        <ul id="profile-task-history-list" class="history-list">
+                            <!-- Task history will be dynamically inserted here -->
+                        </ul>
+                    </div>
+                    <div class="glassmorphism-card">
+                        <h3>Withdrawal History</h3>
+                        <ul id="profile-withdrawal-history-list" class="history-list">
+                            <!-- Withdrawal history will be dynamically inserted here -->
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="support-links glassmorphism-card">
+                    <h3>Support</h3>
+                    <p><a href="https://t.me/ASearnhubchat" target="_blank">Help Center 🤝</a></p>
+                    <p><a href="https://t.me/ASEarnHubSupport_bot" target="_blank">Customer Support 🧑‍💻</a></p>
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="#home" class="nav-item active" data-screen="home-screen">
+                <i class="icon">🏠</i>
+                <span>Home</span>
+            </a>
+            <a href="#ads" class="nav-item" data-screen="ads-task-screen">
+                <i class="icon">📺</i>
+                <span>Ads Task</span>
+            </a>
+            <a href="#tgtasks" class="nav-item" data-screen="tg-tasks-screen">
+                <i class="icon">📢</i>
+                <span>TG Tasks</span>
+            </a>
+            <a href="#refer" class="nav-item" data-screen="referral-screen">
+                <i class="icon">👥</i>
+                <span>Refer</span>
+            </a>
+            <a href="#withdraw" class="nav-item" data-screen="withdraw-screen">
+                <i class="icon">💸</i>
+                <span>Withdraw</span>
+            </a>
+            <a href="#profile" class="nav-item" data-screen="profile-screen">
+                <i class="icon">👤</i>
+                <span>Profile</span>
+            </a>
+        </nav>
+
+        <!-- Toast Notifications -->
+        <div id="toast-container" class="toast-container"></div>
+    </div>
+</body>
+</html>

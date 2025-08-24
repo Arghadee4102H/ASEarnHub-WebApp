@@ -12,7 +12,7 @@ const firebaseConfig = {
   storageBucket: "as-earn-hub-e70f7.firebasestorage.app",
   messagingSenderId: "880785939134",
   appId: "1:880785939134:web:7af830b581e3001c4e5cef",
-  measurementId: "G-62KBLYSCVG"
+  measurementId: "YOUR_MEASUREMENT_ID"
 };
 
 // Initialize Firebase
